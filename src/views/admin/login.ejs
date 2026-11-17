@@ -1,0 +1,39 @@
+<section class="login-screen">
+  <div class="login-art" aria-hidden="true">
+    <a class="brand login-brand" href="/">
+      <span class="brand-mark"><svg viewBox="0 0 64 64"><path d="M16 48c15-2 25-11 29-34-15 2-26 12-29 34Z"/><path class="brand-stem" d="M16 48c10-10 19-19 29-34"/><circle cx="48" cy="48" r="7"/></svg></span>
+      <span class="brand-copy"><strong><%= settings.site_title %></strong><small><%= settings.site_subtitle %></small></span>
+    </a>
+    <div class="login-art-copy">
+      <p>PRIVATE WORKSPACE / 2026</p>
+      <h1>写作是<br>整理世界的<br><em>一种方式。</em></h1>
+    </div>
+    <span class="login-orbit"></span>
+    <span class="login-disc"></span>
+    <span class="login-grid"></span>
+    <div class="login-art-footer"><span>NODE.JS · TYPESCRIPT · MYSQL</span><span>BLOG4MI</span></div>
+  </div>
+  <div class="login-panel">
+    <div class="login-card">
+      <div class="login-heading">
+        <span class="mini-label">SIGN IN</span>
+        <h2>回到工作台</h2>
+        <p>管理文章、评论与站点设置。</p>
+      </div>
+      <% if (flash) { %>
+      <div class="flash flash-<%= flash.type %>" role="status"><span><%= flash.message %></span></div>
+      <% } %>
+      <form class="login-form" action="/admin/login" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="next" value="<%= next %>">
+        <label class="field"><span>用户名或邮箱</span><input type="text" name="login" required autofocus autocomplete="username" placeholder="admin"></label>
+        <label class="field"><span>密码</span><input type="password" name="password" required autocomplete="current-password" placeholder="输入密码"></label>
+        <button class="button button-primary login-submit" type="submit">登录 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></button>
+      </form>
+      <div class="login-help">
+        <span>首次使用请运行 <code>npm run db:seed</code></span>
+        <a href="/">返回博客</a>
+      </div>
+    </div>
+  </div>
+</section>

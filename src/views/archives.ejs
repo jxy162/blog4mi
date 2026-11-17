@@ -1,0 +1,54 @@
+<section class="page-hero shell archive-hero">
+  <div class="page-hero-copy" data-reveal>
+    <p class="eyebrow"><span></span> ARCHIVE / BY TIME</p>
+    <h1>文章归档</h1>
+    <p>所有公开文字，按时间从新到旧排列。共 <%= stats.posts %> 篇，约 <%= Math.max(1, Math.round(stats.words / 1000)) %>k 字。</p>
+  </div>
+  <div class="archive-word" data-reveal aria-hidden="true">ARCHIVE</div>
+</section>
+
+<section class="shell archive-layout">
+  <% if (groups.length) { %>
+  <div class="archive-timeline">
+    <% groups.forEach((group, groupIndex) => { %>
+    <section class="archive-year" data-reveal>
+      <header>
+        <h2><%= group.year %></h2>
+        <span><%= group.months.reduce((sum, month) => sum + month.posts.length, 0) %> 篇 / <%= String(groupIndex + 1).padStart(2, '0') %></span>
+      </header>
+      <div class="archive-months">
+        <% group.months.forEach(month => { %>
+        <div class="archive-month">
+          <h3><%= month.label %></h3>
+          <div class="month-posts">
+            <% month.posts.forEach(post => { %>
+            <a class="month-post" href="/posts/<%= post.slug %>" style="--accent: <%= post.category_color || '#0a8a4e' %>">
+              <span class="month-post-date"><%= post.published_at ? post.published_at.slice(8, 10) : '' %></span>
+              <span class="month-post-main">
+                <strong><%= post.title %></strong>
+                <small><%= post.category_name || '未分类' %> · <%= post.reading_time %> 分钟</small>
+              </span>
+              <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg>
+            </a>
+            <% }) %>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </section>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div class="empty-state"><h2>还没有可以归档的文章。</h2><a class="button button-primary" href="/posts">浏览文章</a></div>
+  <% } %>
+
+  <aside class="archive-aside" data-reveal>
+    <div class="aside-numbers">
+      <div><strong><%= stats.posts %></strong><span>篇文章</span></div>
+      <div><strong><%= stats.words %></strong><span>总字数</span></div>
+      <div><strong><%= stats.comments %></strong><span>条回应</span></div>
+    </div>
+    <p>时间会让文章重新排列。归档不是仓库，而是一条可以回望的路径。</p>
+    <a class="button button-quiet" href="/feed.xml">通过 RSS 订阅 <svg><use href="/assets/images/icons.svg#icon-rss"></use></svg></a>
+  </aside>
+</section>

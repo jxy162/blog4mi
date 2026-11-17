@@ -1,0 +1,80 @@
+<div class="admin-page-head">
+  <div>
+    <p class="eyebrow"><span></span> OVERVIEW</p>
+    <h1>今天也写一点。</h1>
+    <p>内容、互动与站点状态，都在这里。</p>
+  </div>
+  <a class="button button-primary" href="/admin/posts/new"><svg><use href="/assets/images/icons.svg#icon-plus"></use></svg> 写新文章</a>
+</div>
+
+<section class="admin-stats">
+  <article class="stat-card stat-primary">
+    <span class="stat-label">已发布文章</span>
+    <strong><%= stats.published %></strong>
+    <a href="/admin/posts?status=published">查看文章 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+    <span class="stat-shape"></span>
+  </article>
+  <article class="stat-card">
+    <span class="stat-label">累计浏览</span>
+    <strong><%= stats.views.toLocaleString('zh-CN') %></strong>
+    <span class="stat-foot">全部文章阅读次数</span>
+  </article>
+  <article class="stat-card stat-tertiary">
+    <span class="stat-label">待审评论</span>
+    <strong><%= stats.pendingComments %></strong>
+    <a href="/admin/comments?status=pending">处理评论 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+  </article>
+  <article class="stat-card">
+    <span class="stat-label">草稿</span>
+    <strong><%= stats.drafts %></strong>
+    <a href="/admin/posts?status=draft">继续写作 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+  </article>
+</section>
+
+<div class="admin-dashboard-grid">
+  <section class="admin-panel recent-posts-panel">
+    <div class="panel-heading">
+      <div><span class="mini-label">RECENT WORK</span><h2>最近编辑</h2></div>
+      <a href="/admin/posts">全部文章 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>文章</th><th>状态</th><th>浏览</th><th></th></tr></thead>
+        <tbody>
+          <% posts.forEach(post => { %>
+          <tr>
+            <td><a class="table-title" href="/admin/posts/<%= post.id %>/edit"><%= post.title %><small><%= post.category_name || '未分类' %></small></a></td>
+            <td><span class="status-badge status-<%= post.status %>"><%= post.status === 'published' ? '已发布' : post.status === 'draft' ? '草稿' : '已归档' %></span></td>
+            <td><%= post.view_count %></td>
+            <td><a class="table-action" href="/admin/posts/<%= post.id %>/edit" aria-label="编辑"><svg><use href="/assets/images/icons.svg#icon-edit"></use></svg></a></td>
+          </tr>
+          <% }) %>
+          <% if (!posts.length) { %><tr><td colspan="4" class="table-empty">还没有文章，开始写第一篇吧。</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="dashboard-side">
+    <section class="admin-panel content-mix">
+      <div class="panel-heading"><div><span class="mini-label">CONTENT MIX</span><h2>内容构成</h2></div></div>
+      <div class="mix-bar"><span style="width: <%= stats.posts ? Math.round(stats.published / stats.posts * 100) : 0 %>%"></span></div>
+      <div class="mix-legend">
+        <div><i class="mix-published"></i><span>已发布</span><strong><%= stats.published %></strong></div>
+        <div><i class="mix-draft"></i><span>草稿</span><strong><%= stats.drafts %></strong></div>
+        <div><i class="mix-other"></i><span>其他</span><strong><%= Math.max(0, stats.posts - stats.published - stats.drafts) %></strong></div>
+      </div>
+    </section>
+    <section class="admin-panel quick-links">
+      <div class="panel-heading"><div><span class="mini-label">QUICK ACCESS</span><h2>快捷入口</h2></div></div>
+      <a href="/admin/comments"><span><svg><use href="/assets/images/icons.svg#icon-comments"></use></svg>审核评论</span><b><%= stats.pendingComments %></b></a>
+      <a href="/admin/taxonomy"><span><svg><use href="/assets/images/icons.svg#icon-folder"></use></svg>整理分类</span><b><%= stats.categories %></b></a>
+      <a href="/admin/links"><span><svg><use href="/assets/images/icons.svg#icon-link"></use></svg>维护友链</span><svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+      <a href="/admin/settings"><span><svg><use href="/assets/images/icons.svg#icon-settings"></use></svg>站点设置</span><svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+    </section>
+    <section class="dashboard-note">
+      <span class="mini-label">SMALL REMINDER</span>
+      <p>发布之前，先大声读一遍开头。</p>
+    </section>
+  </aside>
+</div>

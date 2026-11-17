@@ -1,0 +1,63 @@
+<div class="admin-page-head">
+  <div>
+    <p class="eyebrow"><span></span> WRITING</p>
+    <h1>文章</h1>
+    <p>管理草稿、发布状态与所有历史内容。</p>
+  </div>
+  <a class="button button-primary" href="/admin/posts/new"><svg><use href="/assets/images/icons.svg#icon-plus"></use></svg> 写新文章</a>
+</div>
+
+<div class="admin-toolbar">
+  <div class="admin-tabs">
+    <a class="<%= !status ? 'is-active' : '' %>" href="/admin/posts">全部</a>
+    <a class="<%= status === 'published' ? 'is-active' : '' %>" href="/admin/posts?status=published">已发布</a>
+    <a class="<%= status === 'draft' ? 'is-active' : '' %>" href="/admin/posts?status=draft">草稿</a>
+    <a class="<%= status === 'archived' ? 'is-active' : '' %>" href="/admin/posts?status=archived">已归档</a>
+  </div>
+  <form class="admin-search" action="/admin/posts" method="get">
+    <% if (status) { %><input type="hidden" name="status" value="<%= status %>"><% } %>
+    <svg><use href="/assets/images/icons.svg#icon-search"></use></svg>
+    <input type="search" name="q" value="<%= q %>" placeholder="搜索标题或 slug">
+  </form>
+</div>
+
+<section class="admin-panel">
+  <div class="admin-table-wrap">
+    <table class="admin-table posts-table">
+      <thead><tr><th>文章</th><th>分类</th><th>状态</th><th>评论</th><th>浏览</th><th>发布时间</th><th></th></tr></thead>
+      <tbody>
+        <% result.posts.forEach(post => { %>
+        <tr>
+          <td>
+            <a class="table-title" href="/admin/posts/<%= post.id %>/edit"><%= post.title %><small>/posts/<%= post.slug %></small></a>
+          </td>
+          <td><%= post.category_name || '未分类' %></td>
+          <td><span class="status-badge status-<%= post.status %>"><%= post.status === 'published' ? '已发布' : post.status === 'draft' ? '草稿' : '已归档' %></span></td>
+          <td><%= post.comment_count %></td>
+          <td><%= post.view_count %></td>
+          <td><%= post.published_at ? formatDate(post.published_at) : '—' %></td>
+          <td>
+            <div class="row-actions">
+              <a href="/posts/<%= post.slug %>" target="_blank" rel="noopener" aria-label="查看"><svg><use href="/assets/images/icons.svg#icon-external"></use></svg></a>
+              <a href="/admin/posts/<%= post.id %>/edit" aria-label="编辑"><svg><use href="/assets/images/icons.svg#icon-edit"></use></svg></a>
+              <form action="/admin/posts/<%= post.id %>/delete" method="post" data-confirm="确定删除这篇文章吗？此操作不可撤销。">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" aria-label="删除"><svg><use href="/assets/images/icons.svg#icon-trash"></use></svg></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+        <% if (!result.posts.length) { %><tr><td colspan="7" class="table-empty">没有符合条件的文章。</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<% if (result.totalPages > 1) { %>
+<nav class="pagination admin-pagination" aria-label="文章分页">
+  <% pageWindow.forEach(item => { %>
+    <% if (item === '…') { %><span class="pagination-gap">…</span><% } else { %><a class="<%= item === result.page ? 'is-current' : '' %>" href="/admin/posts<%= buildQueryString({ page: item, status, q }) %>"><%= item %></a><% } %>
+  <% }) %>
+</nav>
+<% } %>

@@ -1,0 +1,55 @@
+<section class="about-hero shell">
+  <div class="about-portrait" data-reveal>
+    <span class="portrait-grid"></span>
+    <span class="portrait-ring"></span>
+    <span class="portrait-letter"><%= settings.author_name.slice(0, 1) %></span>
+    <span class="portrait-caption">PORTRAIT / 2026</span>
+  </div>
+  <div class="about-intro" data-reveal>
+    <p class="eyebrow"><span></span> ABOUT THE AUTHOR</p>
+    <h1><%= settings.author_name %></h1>
+    <p class="about-lead">在构建中理解世界，在书写中理解自己。</p>
+    <p><%= settings.author_bio %></p>
+    <div class="about-actions">
+      <% if (settings.github_url) { %><a class="button button-primary" href="<%= safeExternalUrl(settings.github_url) %>" target="_blank" rel="noopener"><svg><use href="/assets/images/icons.svg#icon-github"></use></svg> GitHub</a><% } %>
+      <% if (settings.email) { %><a class="button button-quiet" href="mailto:<%= settings.email %>"><svg><use href="/assets/images/icons.svg#icon-mail"></use></svg> 写封邮件</a><% } %>
+    </div>
+  </div>
+</section>
+
+<section class="shell about-facts" data-reveal>
+  <div><strong><%= stats.posts %></strong><span>公开文章</span></div>
+  <div><strong><%= Math.max(1, Math.round(stats.words / 1000)) %>k+</strong><span>累计字数</span></div>
+  <div><strong><%= stats.categories %></strong><span>持续主题</span></div>
+  <div><strong>∞</strong><span>保持好奇</span></div>
+</section>
+
+<section class="section shell about-content-layout">
+  <aside class="about-sidebar" data-reveal>
+    <span class="mini-label">CURRENTLY</span>
+    <dl>
+      <div><dt>在做</dt><dd>构建更好的软件与界面</dd></div>
+      <div><dt>在学</dt><dd>如何把事情讲得更清楚</dd></div>
+      <div><dt>在找</dt><dd>长期而具体的问题</dd></div>
+      <div><dt>坐标</dt><dd>China / UTC+8</dd></div>
+    </dl>
+    <div class="about-sidebar-note">
+      <svg><use href="/assets/images/icons.svg#icon-quote"></use></svg>
+      <p>“好的系统应该安静，好的文字应该有余温。”</p>
+    </div>
+  </aside>
+  <article class="prose about-prose" data-reveal>
+    <%- aboutHtml %>
+  </article>
+</section>
+
+<section class="section shell about-cta" data-reveal>
+  <div>
+    <p class="eyebrow"><span></span> SAY HELLO</p>
+    <h2>有想法，<br>欢迎来信。</h2>
+  </div>
+  <div>
+    <p>无论是文章里的问题、合作的念头，还是仅仅想打个招呼，都可以发邮件。</p>
+    <% if (settings.email) { %><a class="circle-link" href="mailto:<%= settings.email %>" aria-label="发送邮件"><svg><use href="/assets/images/icons.svg#icon-mail"></use></svg></a><% } %>
+  </div>
+</section>

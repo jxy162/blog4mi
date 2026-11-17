@@ -1,0 +1,50 @@
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-signoff" data-reveal>
+      <p class="footer-kicker">STAY CURIOUS / KEEP BUILDING</p>
+      <h2>保持好奇，<br><span>继续写。</span></h2>
+      <a class="circle-link" href="/feed.xml" aria-label="订阅 RSS">
+        <svg><use href="/assets/images/icons.svg#icon-rss"></use></svg>
+      </a>
+    </div>
+
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand brand-footer" href="/">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><path d="M16 48c15-2 25-11 29-34-15 2-26 12-29 34Z"/><path class="brand-stem" d="M16 48c10-10 19-19 29-34"/><circle cx="48" cy="48" r="7"/></svg>
+          </span>
+          <span class="brand-copy"><strong><%= settings.site_title %></strong><small><%= settings.site_subtitle %></small></span>
+        </a>
+        <p><%= settings.footer_text %></p>
+      </div>
+      <nav class="footer-links" aria-label="页脚导航">
+        <span>浏览</span>
+        <a href="/posts">全部文章</a>
+        <a href="/archives">文章归档</a>
+        <a href="/categories">分类主题</a>
+        <a href="/tags">标签索引</a>
+      </nav>
+      <div class="footer-links">
+        <span>连接</span>
+        <% if (settings.github_url) { %><a href="<%= safeExternalUrl(settings.github_url) %>" target="_blank" rel="noopener">GitHub</a><% } %>
+        <% if (settings.email) { %><a href="mailto:<%= settings.email %>">电子邮件</a><% } %>
+        <a href="/feed.xml">RSS 订阅</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+      <div class="footer-note">
+        <span>本站由</span>
+        <strong>Node.js · TypeScript · MySQL</strong>
+        <span>驱动，设计语言取自 M3E。</span>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <%= currentYear %> <%= settings.author_name %>. 保留所有权利。</p>
+      <div>
+        <% if (settings.icp) { %><span><%= settings.icp %></span><% } %>
+        <a href="#top">回到顶部 <svg><use href="/assets/images/icons.svg#icon-arrow-up"></use></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,18 @@
+<article class="comment <%= depth > 0 ? 'comment-child' : '' %>" id="comment-<%= comment.id %>" data-reveal>
+  <div class="comment-avatar" aria-hidden="true"><%= comment.author_name.slice(0, 1) %></div>
+  <div class="comment-body">
+    <header>
+      <div>
+        <% if (comment.author_website) { %><a href="<%= safeExternalUrl(comment.author_website) %>" target="_blank" rel="noopener nofollow"><%= comment.author_name %></a><% } else { %><strong><%= comment.author_name %></strong><% } %>
+        <time datetime="<%= comment.created_at %>"><%= relativeTime(comment.created_at) %></time>
+      </div>
+      <button type="button" class="comment-reply" data-reply data-name="<%= comment.author_name %>" data-id="<%= comment.id %>">回复</button>
+    </header>
+    <p><%= comment.content %></p>
+  </div>
+</article>
+<% if (comment.children.length && depth < 3) { %>
+<div class="comment-children">
+  <% for (const child of comment.children) { %><%- await include('comment', { comment: child, depth: depth + 1 }) %><% } %>
+</div>
+<% } %>

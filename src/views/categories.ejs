@@ -1,0 +1,35 @@
+<section class="page-hero shell">
+  <div class="page-hero-copy" data-reveal>
+    <p class="eyebrow"><span></span> TOPICS / COLLECTIONS</p>
+    <h1>按主题浏览</h1>
+    <p>分类是写作者整理世界的抽屉。选择一个主题，看看长期关注的问题如何慢慢展开。</p>
+  </div>
+  <div class="category-orbit" data-reveal aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+</section>
+
+<section class="section shell categories-showcase">
+  <div class="category-grid">
+    <% categories.forEach((category, index) => { %>
+    <a class="category-card category-card-<%= index % 4 %>" href="/posts?category=<%= category.slug %>" data-reveal style="--accent: <%= category.color %>">
+      <div class="category-card-top">
+        <span class="category-count"><%= String(category.post_count).padStart(2, '0') %> POSTS</span>
+        <span class="category-arrow"><svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></span>
+      </div>
+      <div class="category-shape" aria-hidden="true">
+        <span class="shape-circle"></span><span class="shape-square"></span><span class="shape-letter"><%= category.name.slice(0, 1) %></span>
+      </div>
+      <h2><%= category.name %></h2>
+      <p><%= category.description %></p>
+      <div class="category-card-footer"><span><%= category.slug %></span><span>EXPLORE</span></div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+
+<section class="section shell category-note" data-reveal>
+  <p class="eyebrow"><span></span> A NOTE ON ORGANIZING</p>
+  <h2>分类不是边界，<br>只是进入内容的入口。</h2>
+  <a class="button button-primary" href="/tags">也可以用标签浏览 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+</section>

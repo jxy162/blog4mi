@@ -1,0 +1,51 @@
+<div class="admin-page-head">
+  <div><p class="eyebrow"><span></span> SITE IDENTITY</p><h1>站点设置</h1><p>修改后会立即应用到公开页面。</p></div>
+  <a class="button button-quiet" href="/" target="_blank" rel="noopener">查看站点 <svg><use href="/assets/images/icons.svg#icon-external"></use></svg></a>
+</div>
+
+<form class="settings-form" action="/admin/settings" method="post">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <section class="admin-panel settings-section">
+    <div class="panel-heading"><div><span class="mini-label">IDENTITY</span><h2>站点身份</h2></div></div>
+    <div class="settings-grid">
+      <% definitions.slice(0, 7).forEach(definition => { %>
+      <label class="field <%= definition.type === 'textarea' ? 'field-wide' : '' %>">
+        <span><%= definition.label %></span>
+        <% if (definition.type === 'textarea') { %><textarea name="<%= definition.key %>" rows="3"><%= settings[definition.key] %></textarea><% } else { %><input type="<%= definition.type %>" name="<%= definition.key %>" value="<%= settings[definition.key] %>"><% } %>
+        <small><%= definition.hint %></small>
+      </label>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="admin-panel settings-section">
+    <div class="panel-heading"><div><span class="mini-label">HOMEPAGE</span><h2>首页文案</h2></div></div>
+    <div class="settings-grid">
+      <% definitions.slice(7, 12).forEach(definition => { %>
+      <label class="field <%= definition.type === 'textarea' ? 'field-wide' : '' %>">
+        <span><%= definition.label %></span>
+        <% if (definition.type === 'textarea') { %><textarea name="<%= definition.key %>" rows="4"><%= settings[definition.key] %></textarea><% } else { %><input type="<%= definition.type %>" name="<%= definition.key %>" value="<%= settings[definition.key] %>"><% } %>
+        <small><%= definition.hint %></small>
+      </label>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="admin-panel settings-section">
+    <div class="panel-heading"><div><span class="mini-label">CONNECT</span><h2>联系方式与页脚</h2></div></div>
+    <div class="settings-grid">
+      <% definitions.slice(12).forEach(definition => { %>
+      <label class="field <%= definition.type === 'textarea' ? 'field-wide' : '' %>">
+        <span><%= definition.label %></span>
+        <% if (definition.type === 'textarea') { %><textarea name="<%= definition.key %>" rows="<%= definition.key === 'about_markdown' ? 16 : 4 %>"><%= settings[definition.key] %></textarea><% } else { %><input type="<%= definition.type %>" name="<%= definition.key %>" value="<%= settings[definition.key] %>"><% } %>
+        <small><%= definition.hint %></small>
+      </label>
+      <% }) %>
+    </div>
+  </section>
+
+  <div class="settings-savebar">
+    <p>最后保存的设置会立即覆盖当前站点文案。</p>
+    <button class="button button-primary" type="submit">保存所有设置 <svg><use href="/assets/images/icons.svg#icon-check"></use></svg></button>
+  </div>
+</form>

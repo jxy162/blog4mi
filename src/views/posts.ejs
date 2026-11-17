@@ -1,0 +1,104 @@
+<section class="page-hero shell">
+  <div class="page-hero-copy" data-reveal>
+    <p class="eyebrow"><span></span> WRITING INDEX</p>
+    <h1><%= heading %></h1>
+    <p><%= description %></p>
+  </div>
+  <div class="page-hero-figure" data-reveal aria-hidden="true">
+    <span class="figure-ring"></span>
+    <span class="figure-disc"></span>
+    <span class="figure-slash"></span>
+    <strong><%= String(result.total).padStart(2, '0') %></strong>
+    <small>公开文章</small>
+  </div>
+</section>
+
+<section class="shell archive-browser">
+  <div class="filter-bar" id="filters" data-reveal>
+    <div class="filter-scroll">
+      <a class="filter-chip <%= !categorySlug && !tagSlug && !q ? 'is-active' : '' %>" href="/posts">全部</a>
+      <% categories.forEach(category => { %>
+        <a class="filter-chip <%= categorySlug === category.slug ? 'is-active' : '' %>" href="/posts?category=<%= category.slug %>"><%= category.name %></a>
+      <% }) %>
+    </div>
+    <form class="inline-search" action="/posts" method="get" role="search">
+      <label class="sr-only" for="post-search">搜索文章</label>
+      <svg><use href="/assets/images/icons.svg#icon-search"></use></svg>
+      <input id="post-search" type="search" name="q" value="<%= q %>" placeholder="搜索标题或内容">
+      <button type="submit">搜索</button>
+    </form>
+  </div>
+
+  <div class="browser-layout">
+    <div class="browser-main">
+      <div class="result-summary" data-reveal>
+        <span>共 <%= result.total %> 篇</span>
+        <% if (activeTag) { %><a class="active-filter" href="/posts">#<%= activeTag.name %> <svg><use href="/assets/images/icons.svg#icon-x"></use></svg></a><% } %>
+        <% if (q) { %><a class="active-filter" href="/posts">“<%= q %>” <svg><use href="/assets/images/icons.svg#icon-x"></use></svg></a><% } %>
+      </div>
+
+      <% if (result.posts.length) { %>
+      <div class="writing-list">
+        <% result.posts.forEach((post, index) => { %>
+        <article class="writing-row" data-reveal style="--accent: <%= post.category_color || '#0a8a4e' %>">
+          <div class="writing-index"><%= String((result.page - 1) * result.perPage + index + 1).padStart(2, '0') %></div>
+          <div class="writing-date"><%= formatDate(post.published_at) %></div>
+          <div class="writing-content">
+            <div class="post-card-meta">
+              <span class="category-chip"><i></i><%= post.category_name || '未分类' %></span>
+              <span><%= post.reading_time %> 分钟</span>
+            </div>
+            <h2><a href="/posts/<%= post.slug %>"><%= post.title %></a></h2>
+            <p><%= post.excerpt %></p>
+            <div class="writing-footer">
+              <div class="tag-row"><% post.tags.slice(0, 3).forEach(tag => { %><a href="/posts?tag=<%= tag.slug %>">#<%= tag.name %></a><% }) %></div>
+              <a class="row-arrow" href="/posts/<%= post.slug %>" aria-label="阅读《<%= post.title %>》"><svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+            </div>
+          </div>
+        </article>
+        <% }) %>
+      </div>
+
+      <% if (result.totalPages > 1) { %>
+      <nav class="pagination" aria-label="分页">
+        <% if (result.page > 1) { %><a class="pagination-arrow" href="/posts<%= buildQueryString({ page: result.page - 1, category: categorySlug, tag: tagSlug, q }) %>" aria-label="上一页"><svg><use href="/assets/images/icons.svg#icon-chevron-left"></use></svg></a><% } %>
+        <% pageWindow.forEach(item => { %>
+          <% if (item === '…') { %><span class="pagination-gap">…</span><% } else { %><a class="<%= item === result.page ? 'is-current' : '' %>" href="/posts<%= buildQueryString({ page: item, category: categorySlug, tag: tagSlug, q }) %>"><%= item %></a><% } %>
+        <% }) %>
+        <% if (result.page < result.totalPages) { %><a class="pagination-arrow" href="/posts<%= buildQueryString({ page: result.page + 1, category: categorySlug, tag: tagSlug, q }) %>" aria-label="下一页"><svg><use href="/assets/images/icons.svg#icon-chevron-right"></use></svg></a><% } %>
+      </nav>
+      <% } %>
+      <% } else { %>
+      <div class="empty-state">
+        <span>没有找到对应文章</span>
+        <h2>换个关键词，或者从分类重新开始。</h2>
+        <a class="button button-primary" href="/posts">清除筛选 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+      </div>
+      <% } %>
+    </div>
+
+    <aside class="browser-sidebar">
+      <section class="sidebar-block" data-reveal>
+        <div class="sidebar-heading"><span>分类</span><a href="/categories">全部</a></div>
+        <nav class="sidebar-taxonomy">
+          <% categories.forEach(category => { %>
+          <a class="<%= categorySlug === category.slug ? 'is-active' : '' %>" href="/posts?category=<%= category.slug %>">
+            <span><i style="--dot: <%= category.color %>"></i><%= category.name %></span><small><%= category.post_count %></small>
+          </a>
+          <% }) %>
+        </nav>
+      </section>
+      <section class="sidebar-block" data-reveal>
+        <div class="sidebar-heading"><span>关键词</span><a href="/tags">全部</a></div>
+        <div class="sidebar-tags">
+          <% tags.slice(0, 16).forEach(tag => { %><a class="<%= tagSlug === tag.slug ? 'is-active' : '' %>" href="/posts?tag=<%= tag.slug %>"><%= tag.name %></a><% }) %>
+        </div>
+      </section>
+      <section class="sidebar-note" data-reveal>
+        <span class="mini-label">FIELD NOTE</span>
+        <p>慢一点读，<br>也慢一点判断。</p>
+        <a href="/about">关于这个博客 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+      </section>
+    </aside>
+  </div>
+</section>

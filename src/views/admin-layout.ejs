@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#eef1e8">
+  <title><%= pageTitle %> · <%= settings.site_title %> 工作台</title>
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <script>
+    (() => { document.documentElement.classList.add('js'); try { const saved = localStorage.getItem('theme'); const dark = matchMedia('(prefers-color-scheme: dark)').matches; document.documentElement.dataset.theme = saved || (dark ? 'dark' : 'light'); } catch {} })();
+  </script>
+</head>
+<body class="admin-body <%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <a class="skip-link" href="#admin-main">跳到内容</a>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" data-admin-sidebar>
+      <a class="brand admin-brand" href="/admin">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M16 48c15-2 25-11 29-34-15 2-26 12-29 34Z"/><path class="brand-stem" d="M16 48c10-10 19-19 29-34"/><circle cx="48" cy="48" r="7"/></svg></span>
+        <span class="brand-copy"><strong><%= settings.site_title %></strong><small>CONTENT STUDIO</small></span>
+      </a>
+
+      <nav class="admin-nav" aria-label="后台导航">
+        <span class="admin-nav-label">工作区</span>
+        <a class="<%= activeNav === 'dashboard' ? 'is-active' : '' %>" href="/admin"><svg><use href="/assets/images/icons.svg#icon-dashboard"></use></svg><span>概览</span></a>
+        <a class="<%= activeNav === 'posts' ? 'is-active' : '' %>" href="/admin/posts"><svg><use href="/assets/images/icons.svg#icon-file"></use></svg><span>文章</span></a>
+        <a class="<%= activeNav === 'comments' ? 'is-active' : '' %>" href="/admin/comments"><svg><use href="/assets/images/icons.svg#icon-comments"></use></svg><span>评论</span></a>
+        <span class="admin-nav-label">内容组织</span>
+        <a class="<%= activeNav === 'taxonomy' ? 'is-active' : '' %>" href="/admin/taxonomy"><svg><use href="/assets/images/icons.svg#icon-folder"></use></svg><span>分类与标签</span></a>
+        <a class="<%= activeNav === 'links' ? 'is-active' : '' %>" href="/admin/links"><svg><use href="/assets/images/icons.svg#icon-link"></use></svg><span>友链</span></a>
+        <span class="admin-nav-label">站点</span>
+        <a class="<%= activeNav === 'settings' ? 'is-active' : '' %>" href="/admin/settings"><svg><use href="/assets/images/icons.svg#icon-settings"></use></svg><span>站点设置</span></a>
+        <a class="<%= activeNav === 'account' ? 'is-active' : '' %>" href="/admin/account"><svg><use href="/assets/images/icons.svg#icon-eye"></use></svg><span>账号安全</span></a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="/" target="_blank" rel="noopener"><svg><use href="/assets/images/icons.svg#icon-external"></use></svg><span>查看站点</span></a>
+        <div class="admin-user">
+          <span class="admin-avatar"><%= currentUser.display_name.slice(0, 1) %></span>
+          <span><strong><%= currentUser.display_name %></strong><small><%= currentUser.role %></small></span>
+          <form action="/admin/logout" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" aria-label="退出登录" title="退出登录"><svg><use href="/assets/images/icons.svg#icon-logout"></use></svg></button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <div class="admin-workspace">
+      <header class="admin-topbar">
+        <button class="icon-button admin-menu-button" type="button" data-admin-menu aria-expanded="false" aria-label="打开后台菜单"><svg><use href="/assets/images/icons.svg#icon-menu"></use></svg></button>
+        <div class="admin-topbar-title">
+          <span>CONTENT STUDIO</span>
+          <strong><%= pageTitle %></strong>
+        </div>
+        <div class="admin-topbar-actions">
+          <a class="icon-button" href="/" target="_blank" rel="noopener" aria-label="查看站点"><svg><use href="/assets/images/icons.svg#icon-external"></use></svg></a>
+          <button class="icon-button" type="button" data-theme-toggle aria-label="切换主题"><svg class="theme-icon theme-icon-sun"><use href="/assets/images/icons.svg#icon-sun"></use></svg><svg class="theme-icon theme-icon-moon"><use href="/assets/images/icons.svg#icon-moon"></use></svg></button>
+          <span class="topbar-avatar"><%= currentUser.display_name.slice(0, 1) %></span>
+        </div>
+      </header>
+
+      <main class="admin-main" id="admin-main">
+        <% if (flash) { %>
+        <div class="flash flash-<%= flash.type %>" role="status">
+          <span><%= flash.message %></span>
+          <button type="button" data-dismiss-flash aria-label="关闭提示"><svg><use href="/assets/images/icons.svg#icon-x"></use></svg></button>
+        </div>
+        <% } %>
+        <%- body %>
+      </main>
+    </div>
+  </div>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/admin.js" defer></script>
+</body>
+</html>

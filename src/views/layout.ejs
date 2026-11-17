@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f5f6f0">
+  <meta name="description" content="<%= pageDescription || settings.site_description %>">
+  <title><%= pageTitle ? `${pageTitle} · ${settings.site_title}` : `${settings.site_title} — ${settings.site_subtitle}` %></title>
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="alternate" type="application/rss+xml" title="<%= settings.site_title %> RSS" href="/feed.xml">
+  <% if (typeof canonicalPath !== 'undefined' && canonicalPath) { %><link rel="canonical" href="<%= canonicalPath %>"><% } %>
+  <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+  <meta property="og:title" content="<%= pageTitle || settings.site_title %>">
+  <meta property="og:description" content="<%= pageDescription || settings.site_description %>">
+  <meta property="og:site_name" content="<%= settings.site_title %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>
+    (() => {
+      document.documentElement.classList.add('js');
+      try {
+        const saved = localStorage.getItem('theme');
+        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = saved || (dark ? 'dark' : 'light');
+      } catch {}
+    })();
+  </script>
+  <% if (typeof structuredData !== 'undefined' && structuredData) { %>
+  <script type="application/ld+json"><%- JSON.stringify(structuredData).replace(/</g, '\\u003c') %></script>
+  <% } %>
+</head>
+<body id="top" class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <a class="skip-link" href="#main-content">跳到正文</a>
+  <% if (!hideChrome) { %><%- include('partials/header') %><% } %>
+  <main id="main-content" tabindex="-1"><%- body %></main>
+  <% if (!hideChrome) { %><%- include('partials/footer') %><% } %>
+  <script src="/assets/js/main.js" defer></script>
+</body>
+</html>

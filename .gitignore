@@ -1,0 +1,15 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+coverage
+*.log
+.DS_Store
+Thumbs.db
+.edge-headless*/
+_shots/
+_*check.mjs
+_*rendered.html
+_reference-*
+_test.png

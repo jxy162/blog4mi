@@ -1,0 +1,38 @@
+<div class="admin-page-head">
+  <div><p class="eyebrow"><span></span> CONVERSATION</p><h1>评论</h1><p>审核、回复或清理读者留言。</p></div>
+</div>
+
+<div class="admin-toolbar">
+  <div class="admin-tabs">
+    <a class="<%= !status ? 'is-active' : '' %>" href="/admin/comments">全部</a>
+    <a class="<%= status === 'pending' ? 'is-active' : '' %>" href="/admin/comments?status=pending">待审核</a>
+    <a class="<%= status === 'approved' ? 'is-active' : '' %>" href="/admin/comments?status=approved">已通过</a>
+    <a class="<%= status === 'spam' ? 'is-active' : '' %>" href="/admin/comments?status=spam">垃圾</a>
+  </div>
+  <span class="admin-toolbar-count"><%= comments.length %> 条记录</span>
+</div>
+
+<div class="comment-admin-list">
+  <% comments.forEach(comment => { %>
+  <article class="admin-comment-card" data-reveal>
+    <header>
+      <span class="admin-comment-avatar"><%= comment.author_name.slice(0, 1) %></span>
+      <div class="admin-comment-author">
+        <strong><%= comment.author_name %></strong>
+        <span><%= comment.author_email %><% if (comment.author_website) { %> · <a href="<%= safeExternalUrl(comment.author_website) %>" target="_blank" rel="noopener nofollow">网站</a><% } %></span>
+      </div>
+      <span class="status-badge status-<%= comment.status %>"><%= comment.status === 'approved' ? '已通过' : comment.status === 'pending' ? '待审核' : '垃圾评论' %></span>
+    </header>
+    <div class="admin-comment-content"><%= comment.content %></div>
+    <footer>
+      <div><span>来自</span><a href="/posts/<%= comment.post_slug %>" target="_blank" rel="noopener"><%= comment.post_title %> <svg><use href="/assets/images/icons.svg#icon-external"></use></svg></a><time><%= formatDateTime(comment.created_at) %></time></div>
+      <div class="comment-actions">
+        <% if (comment.status !== 'approved') { %><form action="/admin/comments/<%= comment.id %>/status" method="post"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="approved"><button class="action-approve" type="submit"><svg><use href="/assets/images/icons.svg#icon-check"></use></svg>通过</button></form><% } %>
+        <% if (comment.status !== 'spam') { %><form action="/admin/comments/<%= comment.id %>/status" method="post"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="spam"><button type="submit"><svg><use href="/assets/images/icons.svg#icon-alert"></use></svg>标记垃圾</button></form><% } %>
+        <form action="/admin/comments/<%= comment.id %>/delete" method="post" data-confirm="确定删除这条评论吗？"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="action-danger" type="submit"><svg><use href="/assets/images/icons.svg#icon-trash"></use></svg>删除</button></form>
+      </div>
+    </footer>
+  </article>
+  <% }) %>
+  <% if (!comments.length) { %><div class="empty-state"><h2>这里很安静。</h2><p>没有符合当前筛选条件的评论。</p></div><% } %>
+</div>

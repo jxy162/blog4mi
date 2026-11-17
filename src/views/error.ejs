@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= statusCode %> · <%= title %></title>
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('theme');const d=matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=t||(d?'dark':'light')}catch{}</script>
+</head>
+<body class="error-page">
+  <main class="error-shell">
+    <header class="error-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M16 48c15-2 25-11 29-34-15 2-26 12-29 34Z"/><path class="brand-stem" d="M16 48c10-10 19-19 29-34"/><circle cx="48" cy="48" r="7"/></svg></span>
+        <span class="brand-copy"><strong><%= settings.site_title || '余白手记' %></strong><small><%= settings.site_subtitle || 'FIELD NOTES' %></small></span>
+      </a>
+    </header>
+    <section class="error-content">
+      <div class="error-code"><%= statusCode %></div>
+      <p class="eyebrow"><span></span> SOMETHING WENT SIDEWAYS</p>
+      <h1><%= title %></h1>
+      <p><%= message %></p>
+      <div class="error-actions">
+        <a class="button button-primary" href="/">回到首页 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+        <a class="button button-quiet" href="/posts">浏览文章</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

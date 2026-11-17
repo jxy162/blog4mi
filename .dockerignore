@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+_shots
+_reference-*
+_*check.mjs
+_*rendered.html
+*.log

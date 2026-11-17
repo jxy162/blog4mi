@@ -1,0 +1,25 @@
+<section class="page-hero shell tag-hero">
+  <div class="page-hero-copy" data-reveal>
+    <p class="eyebrow"><span></span> KEYWORDS / INDEX</p>
+    <h1>标签索引</h1>
+    <p>比分类更轻，比搜索更具体。这里记录文章里反复出现的关键词。</p>
+  </div>
+  <div class="tag-hero-mark" data-reveal aria-hidden="true">#</div>
+</section>
+
+<section class="section shell tag-index">
+  <div class="tag-index-cloud" data-reveal>
+    <% tags.forEach((tag, index) => { %>
+      <% const size = tag.post_count >= 4 ? 'xl' : tag.post_count >= 2 ? 'lg' : index < 8 ? 'md' : 'sm'; %>
+      <a class="keyword keyword-<%= size %>" href="/posts?tag=<%= tag.slug %>">
+        <span>#<%= tag.name %></span><sup><%= tag.post_count %></sup>
+      </a>
+    <% }) %>
+  </div>
+  <% if (!tags.length) { %><div class="empty-state"><h2>还没有标签。</h2></div><% } %>
+</section>
+
+<section class="shell keyword-note" data-reveal>
+  <div><span class="mini-label">HOW TO READ</span><p>标签的大小代表文章数量。点击任意关键词，查看所有相关文字。</p></div>
+  <a href="/categories">浏览分类 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+</section>

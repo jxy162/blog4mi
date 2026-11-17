@@ -1,0 +1,37 @@
+<div class="admin-page-head">
+  <div><p class="eyebrow"><span></span> SECURITY</p><h1>账号安全</h1><p>定期更新密码，不要在多个服务复用同一组凭据。</p></div>
+</div>
+
+<div class="account-grid">
+  <section class="admin-panel account-profile">
+    <div class="account-profile-head">
+      <span class="account-avatar"><%= currentUser.display_name.slice(0, 1) %></span>
+      <div><h2><%= currentUser.display_name %></h2><p>@<%= currentUser.username %> · <%= currentUser.email %></p></div>
+    </div>
+    <div class="account-meta">
+      <div><span>角色</span><strong><%= currentUser.role %></strong></div>
+      <div><span>账号状态</span><strong class="status-ok">正常</strong></div>
+    </div>
+  </section>
+
+  <section class="admin-panel account-password">
+    <div class="panel-heading"><div><span class="mini-label">PASSWORD</span><h2>修改密码</h2></div></div>
+    <form action="/admin/account/password" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label class="field"><span>当前密码</span><input type="password" name="current_password" required autocomplete="current-password"></label>
+      <label class="field"><span>新密码</span><input type="password" name="new_password" required minlength="10" autocomplete="new-password"><small>至少 10 个字符，建议混合大小写、数字与符号。</small></label>
+      <label class="field"><span>确认新密码</span><input type="password" name="confirm_password" required minlength="10" autocomplete="new-password"></label>
+      <button class="button button-primary" type="submit">更新密码 <svg><use href="/assets/images/icons.svg#icon-check"></use></svg></button>
+    </form>
+  </section>
+
+  <section class="admin-panel account-notes">
+    <div class="panel-heading"><div><span class="mini-label">CHECKLIST</span><h2>安全清单</h2></div></div>
+    <ul>
+      <li><svg><use href="/assets/images/icons.svg#icon-check"></use></svg><span>生产环境使用独立且随机的 <code>SESSION_SECRET</code></span></li>
+      <li><svg><use href="/assets/images/icons.svg#icon-check"></use></svg><span>初始化后立即修改默认管理员密码</span></li>
+      <li><svg><use href="/assets/images/icons.svg#icon-check"></use></svg><span>通过 HTTPS 反向代理暴露站点，并启用安全 Cookie</span></li>
+      <li><svg><use href="/assets/images/icons.svg#icon-check"></use></svg><span>定期备份 MySQL 数据库与上传资源</span></li>
+    </ul>
+  </section>
+</div>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
+  <rect width="400" height="120" rx="30" fill="#0a8a4e"/>
+  <path d="M34 88c32-3 54-23 63-68-33 3-58 24-63 68Z" fill="#d9f8e6"/>
+  <path d="M34 88c22-21 41-39 63-68" fill="none" stroke="#0a8a4e" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="104" cy="84" r="16" fill="#ff8c62"/>
+  <text x="148" y="73" fill="#fff" font-family="Arial, sans-serif" font-size="38" font-weight="700">BLOG4MI</text>
+</svg>

@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: blog4mi-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: blog4mi
+      MYSQL_USER: blog
+      MYSQL_PASSWORD: blogpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - blog4mi_mysql:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  app:
+    build: .
+    container_name: blog4mi-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: mysql://blog:blogpassword@db:3306/blog4mi
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: blog4mi
+      DB_USER: blog
+      DB_PASSWORD: blogpassword
+      TZ: Asia/Shanghai
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "node dist/scripts/migrate.js && node dist/scripts/seed.js && node dist/index.js"
+
+volumes:
+  blog4mi_mysql:

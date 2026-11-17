@@ -1,0 +1,174 @@
+<div class="reading-progress" data-reading-progress aria-hidden="true"><span></span></div>
+
+<section class="article-hero shell">
+  <nav class="breadcrumb" aria-label="面包屑" data-reveal>
+    <a href="/">首页</a><svg><use href="/assets/images/icons.svg#icon-chevron-right"></use></svg>
+    <a href="/posts">文章</a><svg><use href="/assets/images/icons.svg#icon-chevron-right"></use></svg>
+    <% if (post.category_slug) { %><a href="/posts?category=<%= post.category_slug %>"><%= post.category_name %></a><% } else { %><span>未分类</span><% } %>
+  </nav>
+
+  <header class="article-header" data-reveal>
+    <div class="article-labels">
+      <span class="category-chip"><i style="--dot: <%= post.category_color || '#0a8a4e' %>"></i><%= post.category_name || '未分类' %></span>
+      <% if (post.featured) { %><span class="article-featured">编辑推荐</span><% } %>
+    </div>
+    <h1><%= post.title %></h1>
+    <p class="article-deck"><%= post.excerpt %></p>
+    <div class="article-meta">
+      <span class="author-mini"><i><%= post.author_name.slice(0, 1) %></i><%= post.author_name %></span>
+      <span><svg><use href="/assets/images/icons.svg#icon-calendar"></use></svg><%= formatDate(post.published_at, 'long') %></span>
+      <span><svg><use href="/assets/images/icons.svg#icon-clock"></use></svg><%= post.reading_time %> 分钟阅读</span>
+      <span><svg><use href="/assets/images/icons.svg#icon-eye"></use></svg><%= post.view_count %> 次浏览</span>
+    </div>
+  </header>
+
+  <figure class="article-cover" data-reveal aria-label="文章题图">
+    <% if (post.cover_url) { %>
+      <img src="<%= safeExternalUrl(post.cover_url) %>" alt="">
+    <% } else { %>
+      <span class="article-cover-grid"></span>
+      <span class="article-cover-ring cover-ring-one"></span>
+      <span class="article-cover-ring cover-ring-two"></span>
+      <span class="article-cover-disc"></span>
+      <span class="article-cover-letter"><%= post.title.slice(0, 1) %></span>
+      <div class="article-cover-meta">
+        <span>READING / <%= String(post.reading_time).padStart(2, '0') %> MIN</span>
+        <span><%= formatDate(post.published_at) %></span>
+      </div>
+    <% } %>
+  </figure>
+</section>
+
+<section class="article-layout shell">
+  <article class="article-main">
+    <div class="prose" data-article-body>
+      <%- postHtml %>
+    </div>
+
+    <div class="article-tags">
+      <span>继续探索</span>
+      <div class="tag-row">
+        <% post.tags.forEach(tag => { %><a href="/posts?tag=<%= tag.slug %>">#<%= tag.name %></a><% }) %>
+      </div>
+    </div>
+
+    <aside class="author-card">
+      <div class="author-avatar">
+        <% if (settings.author_avatar) { %><img src="<%= safeExternalUrl(settings.author_avatar) %>" alt="<%= post.author_name %>"><% } else { %><span><%= post.author_name.slice(0, 1) %></span><% } %>
+      </div>
+      <div class="author-copy">
+        <span>WRITTEN BY</span>
+        <h2><%= post.author_name %></h2>
+        <p><%= settings.author_bio %></p>
+        <div class="author-links">
+          <a href="/about">关于作者</a>
+          <% if (settings.github_url) { %><a href="<%= safeExternalUrl(settings.github_url) %>" target="_blank" rel="noopener">GitHub</a><% } %>
+        </div>
+      </div>
+    </aside>
+
+    <nav class="post-navigation" aria-label="相邻文章">
+      <% if (adjacent.older) { %>
+      <a class="post-nav-link previous" href="/posts/<%= adjacent.older.slug %>">
+        <span><svg><use href="/assets/images/icons.svg#icon-chevron-left"></use></svg> 上一篇</span>
+        <strong><%= adjacent.older.title %></strong>
+      </a>
+      <% } else { %><span></span><% } %>
+      <% if (adjacent.newer) { %>
+      <a class="post-nav-link next" href="/posts/<%= adjacent.newer.slug %>">
+        <span>下一篇 <svg><use href="/assets/images/icons.svg#icon-chevron-right"></use></svg></span>
+        <strong><%= adjacent.newer.title %></strong>
+      </a>
+      <% } %>
+    </nav>
+
+    <section class="comments-section" id="comments">
+      <div class="comments-heading">
+        <div>
+          <p class="eyebrow"><span></span> CONVERSATION</p>
+          <h2>评论与回应 <sup><%= comments.reduce((sum, item) => sum + 1 + item.children.length, 0) %></sup></h2>
+        </div>
+      </div>
+
+      <% if (flash) { %>
+      <div class="flash flash-<%= flash.type %>" role="status">
+        <span><%= flash.message %></span>
+        <button type="button" data-dismiss-flash aria-label="关闭提示"><svg><use href="/assets/images/icons.svg#icon-x"></use></svg></button>
+      </div>
+      <% } %>
+
+      <% if (comments.length) { %>
+      <div class="comment-list">
+        <% for (const comment of comments) { %><%- await include('partials/comment', { comment, depth: 0 }) %><% } %>
+      </div>
+      <% } else { %>
+      <div class="comment-empty">
+        <span><svg><use href="/assets/images/icons.svg#icon-comments"></use></svg></span>
+        <p>还没有公开回应。你可以成为第一个留下想法的人。</p>
+      </div>
+      <% } %>
+
+      <% if (post.allow_comments) { %>
+      <form class="comment-form" id="comment-form" action="/posts/<%= post.slug %>/comments" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="parent_id" value="" data-parent-id>
+        <div class="reply-target" data-reply-target hidden>
+          <span>正在回复 <strong data-reply-name></strong></span>
+          <button type="button" data-cancel-reply>取消</button>
+        </div>
+        <div class="form-heading">
+          <p class="eyebrow"><span></span> LEAVE A NOTE</p>
+          <h3>留下你的想法</h3>
+          <p>评论会先经过审核，通过后显示在这里。</p>
+        </div>
+        <div class="form-grid">
+          <label class="field"><span>称呼 <b>*</b></span><input type="text" name="author_name" required maxlength="80" autocomplete="name" placeholder="怎么称呼你"></label>
+          <label class="field"><span>邮箱 <b>*</b></span><input type="email" name="author_email" required maxlength="190" autocomplete="email" placeholder="不会公开显示"></label>
+          <label class="field field-wide"><span>网站</span><input type="url" name="author_website" maxlength="300" autocomplete="url" placeholder="https://（可选）"></label>
+          <label class="field field-wide"><span>评论 <b>*</b></span><textarea name="content" required maxlength="3000" rows="6" placeholder="写下你的想法…"></textarea></label>
+        </div>
+        <label class="honeypot" aria-hidden="true">Company website<input type="text" name="company_website" tabindex="-1" autocomplete="off"></label>
+        <div class="form-footer">
+          <p>提交即表示你同意公开展示这条评论。</p>
+          <button class="button button-primary" type="submit">提交评论 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></button>
+        </div>
+      </form>
+      <% } else { %>
+      <div class="comment-closed">这篇文章已关闭评论，但你仍然可以通过邮件交流。</div>
+      <% } %>
+    </section>
+  </article>
+
+  <aside class="article-aside">
+    <% if (toc.length) { %>
+    <nav class="toc" data-toc aria-label="文章目录">
+      <span class="mini-label">ON THIS PAGE</span>
+      <p>本文目录</p>
+      <div class="toc-links">
+        <% toc.forEach(item => { %><a class="toc-level-<%= item.level %>" href="#<%= item.id %>"><%= item.text %></a><% }) %>
+      </div>
+    </nav>
+    <% } %>
+    <div class="aside-note">
+      <span class="mini-label">NOTE TO SELF</span>
+      <p>“写作不是把知道的说出来，而是借写作把还没想清楚的事想清楚。”</p>
+      <a href="/archives">继续读旧文 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+    </div>
+    <button class="back-to-top" type="button" data-back-to-top>
+      <svg><use href="/assets/images/icons.svg#icon-arrow-up"></use></svg>
+      回到顶部
+    </button>
+  </aside>
+</section>
+
+<% if (related.length) { %>
+<section class="section shell related-section">
+  <div class="section-heading" data-reveal>
+    <div><p class="eyebrow"><span></span> 继续阅读</p><h2>相近主题的文章</h2></div>
+    <a class="text-link" href="/posts">全部文章 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
+  </div>
+  <div class="post-grid related-grid">
+    <% for (const [index, item] of related.entries()) { %><%- await include('partials/post-card', { post: item, index }) %><% } %>
+  </div>
+</section>
+<% } %>

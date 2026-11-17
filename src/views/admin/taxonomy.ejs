@@ -1,0 +1,60 @@
+<div class="admin-page-head">
+  <div><p class="eyebrow"><span></span> ORGANIZE</p><h1>分类与标签</h1><p>用稳定的结构组织文章，而不是制造更多层级。</p></div>
+</div>
+
+<div class="taxonomy-admin-grid">
+  <section class="admin-panel">
+    <div class="panel-heading"><div><span class="mini-label">CATEGORIES</span><h2>分类</h2></div><span class="panel-count"><%= categories.length %></span></div>
+    <form class="inline-create-form" action="/admin/categories" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="create-grid">
+        <label class="field compact"><span>名称</span><input type="text" name="name" required maxlength="80" placeholder="例如：工程手记"></label>
+        <label class="field compact"><span>Slug</span><input type="text" name="slug" maxlength="100" placeholder="engineering"></label>
+        <label class="field compact field-color"><span>颜色</span><input type="color" name="color" value="#0a8a4e"></label>
+      </div>
+      <label class="field compact"><span>说明</span><input type="text" name="description" maxlength="255" placeholder="一句话说明这个分类"></label>
+      <button class="button button-primary button-small" type="submit"><svg><use href="/assets/images/icons.svg#icon-plus"></use></svg>添加分类</button>
+    </form>
+
+    <div class="taxonomy-list">
+      <% categories.forEach(category => { %>
+      <form class="taxonomy-item category-item" action="/admin/categories/<%= category.id %>" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <span class="taxonomy-dot" style="--dot: <%= category.color %>"></span>
+        <div class="taxonomy-fields">
+          <input type="text" name="name" value="<%= category.name %>" aria-label="分类名称" required>
+          <input type="text" name="slug" value="<%= category.slug %>" aria-label="分类 slug" required>
+          <input type="text" name="description" value="<%= category.description || '' %>" aria-label="分类说明" placeholder="分类说明">
+        </div>
+        <input class="color-mini" type="color" name="color" value="<%= category.color %>" aria-label="分类颜色">
+        <span class="taxonomy-count"><%= category.post_count %> 篇</span>
+        <div class="taxonomy-actions">
+          <button type="submit" aria-label="保存分类"><svg><use href="/assets/images/icons.svg#icon-check"></use></svg></button>
+          <button type="submit" formaction="/admin/categories/<%= category.id %>/delete" data-confirm="删除分类后，相关文章会变为未分类。确定删除吗？" aria-label="删除分类"><svg><use href="/assets/images/icons.svg#icon-trash"></use></svg></button>
+        </div>
+      </form>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="panel-heading"><div><span class="mini-label">TAGS</span><h2>标签</h2></div><span class="panel-count"><%= tags.length %></span></div>
+    <form class="inline-create-form tag-create-form" action="/admin/tags" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label class="field compact"><span>新标签</span><input type="text" name="name" required maxlength="60" placeholder="例如：TypeScript"></label>
+      <button class="button button-primary button-small" type="submit"><svg><use href="/assets/images/icons.svg#icon-plus"></use></svg>添加</button>
+    </form>
+    <div class="taxonomy-list tag-admin-list">
+      <% tags.forEach(tag => { %>
+      <form class="tag-admin-item" action="/admin/tags/<%= tag.id %>" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <span>#</span>
+        <input type="text" name="name" value="<%= tag.name %>" required aria-label="标签名称">
+        <small><%= tag.post_count %> 篇</small>
+        <button type="submit" aria-label="保存标签"><svg><use href="/assets/images/icons.svg#icon-check"></use></svg></button>
+        <button type="submit" formaction="/admin/tags/<%= tag.id %>/delete" data-confirm="确定删除这个标签吗？" aria-label="删除标签"><svg><use href="/assets/images/icons.svg#icon-trash"></use></svg></button>
+      </form>
+      <% }) %>
+    </div>
+  </section>
+</div>
