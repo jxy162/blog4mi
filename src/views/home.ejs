@@ -105,9 +105,13 @@
     </div>
     <a class="text-link" href="/posts">查看全部 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
   </div>
+  <% if (posts.length) { %>
   <div class="post-grid">
     <% for (const [index, post] of posts.entries()) { %><%- await include('partials/post-card', { post, index }) %><% } %>
   </div>
+  <% } else { %>
+  <div class="empty-state"><p>还没有发布文章，第一篇文章正在路上。</p></div>
+  <% } %>
 </section>
 
 <section class="section shell topics-section">
@@ -119,6 +123,7 @@
   </div>
   <div class="topic-layout">
     <div class="topic-grid">
+      <% if (categories.length) { %>
       <% categories.forEach((category, index) => { %>
       <a class="topic-card" href="/posts?category=<%= category.slug %>" data-reveal style="--accent: <%= category.color %>">
         <span class="topic-number"><%= String(index + 1).padStart(2, '0') %></span>
@@ -130,6 +135,9 @@
         <span class="topic-count"><%= category.post_count %> 篇 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></span>
       </a>
       <% }) %>
+      <% } else { %>
+      <div class="empty-state"><p>还没有创建分类。</p></div>
+      <% } %>
     </div>
     <aside class="tag-panel" data-reveal>
       <div class="tag-panel-heading">
@@ -137,9 +145,13 @@
         <h3>从关键词开始</h3>
       </div>
       <div class="tag-cloud">
+        <% if (tags.length) { %>
         <% tags.forEach((tag, index) => { %>
         <a href="/posts?tag=<%= tag.slug %>" class="<%= index < 3 ? 'tag-large' : '' %>"><%= tag.name %><sup><%= tag.post_count %></sup></a>
         <% }) %>
+        <% } else { %>
+        <p class="tag-empty">还没有标签。</p>
+        <% } %>
       </div>
       <a class="text-link tag-all" href="/tags">标签索引 <svg><use href="/assets/images/icons.svg#icon-arrow"></use></svg></a>
     </aside>

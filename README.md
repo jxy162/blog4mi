@@ -1,4 +1,4 @@
-# blog4mi
+# 晚安的博客
 
 一个以 **Node.js + TypeScript + MySQL** 构建的个人博客系统。视觉语言参考支付宝 Agent Pay 产品页的简洁平面设计，并结合 **Material Design 3 Expressive（M3E）** 的色调层级、形状系统与动效原则。
 
@@ -52,7 +52,18 @@ Copy-Item .env.example .env
 
 生产环境必须替换 `SESSION_SECRET` 和默认管理员密码。
 
-### 2. 使用 Docker Desktop
+### 2. 使用 GitHub Codespaces
+
+仓库已包含 `.devcontainer` 配置。在 GitHub 仓库页面选择 **Code → Codespaces → Create codespace on main**，Codespaces 会自动：
+
+1. 启动 Node.js 24 开发容器和 MySQL 8.4；
+2. 安装依赖并执行数据库迁移；
+3. 创建管理员和默认站点设置；
+4. 启动开发服务器并转发 `3000` 端口。
+
+详细说明见 [docs/CODESPACES.md](docs/CODESPACES.md)。
+
+### 3. 使用 Docker Desktop
 
 先启动 Docker Desktop，然后在项目目录执行：
 
@@ -75,7 +86,7 @@ npm run db:seed
 npm run dev
 ```
 
-### 3. 使用本机 MySQL
+### 4. 使用本机 MySQL
 
 创建数据库和用户，然后按实际端口修改 `.env` 中的 `DATABASE_URL` / `DB_*` 配置：
 
@@ -102,7 +113,8 @@ npm test             # 单元测试
 npm run build        # 编译并复制 views/public 到 dist
 npm start            # 运行生产构建
 npm run db:migrate   # 开发环境建表
-npm run db:seed      # 初始化管理员、分类、示例文章与友链
+npm run db:seed      # 初始化管理员与默认设置（不创建示例内容）
+npm run db:clear-content  # 清空文章、分类、标签、评论和友链，保留管理员与设置
 ```
 
 ## 目录结构
@@ -118,13 +130,15 @@ src/
   public/              CSS、JavaScript、SVG 图标
 db/schema.sql          MySQL 表结构
 tests/                 Vitest 单元测试
-docs/                  设计与 Windows 存储说明
+.devcontainer/         GitHub Codespaces 开发容器配置
+docs/                  设计与部署说明
 ```
 
 ## 设计与安全说明
 
 - 视觉规范与目标站分析见 [docs/DESIGN.md](docs/DESIGN.md)。
 - Windows 下 Docker Desktop 安装、WSL 2 配置与 D 盘数据位置见 [docs/WINDOWS-STORAGE.md](docs/WINDOWS-STORAGE.md)。
+- GitHub Codespaces 启动方式与默认账号见 [docs/CODESPACES.md](docs/CODESPACES.md)。
 - 所有写操作均经过 CSRF 校验；Markdown 输出经过白名单清洗。
 - 评论默认进入待审核队列，登录和评论接口有限流。
 - 生产环境建议通过 HTTPS 反向代理暴露服务，并定期备份 MySQL。

@@ -1,0 +1,24 @@
+{
+  "name": "晚安的博客",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/blog4mi",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "node",
+  "postCreateCommand": "npm ci && npm run db:migrate && npm run db:seed",
+  "postStartCommand": "npm run db:migrate && npm run db:seed && nohup npm run dev > /tmp/blog4mi-dev.log 2>&1 &",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "晚安的博客",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:24
+    init: true
+    working_dir: /workspaces/blog4mi
+    volumes:
+      - ..:/workspaces/blog4mi:cached
+    command: sleep infinity
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      SITE_URL: http://localhost:3000
+      SESSION_SECRET: codespaces-development-secret-change-before-public-use
+      DATABASE_URL: mysql://blog:blogpassword@db:3306/blog4mi
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: blog4mi
+      DB_USER: blog
+      DB_PASSWORD: blogpassword
+      DB_TIMEZONE: "+08:00"
+      ADMIN_USERNAME: admin
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: Admin@123456
+      TZ: Asia/Shanghai
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: blog4mi
+      MYSQL_USER: blog
+      MYSQL_PASSWORD: blogpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+      TZ: Asia/Shanghai
+    volumes:
+      - blog4mi_codespaces_mysql:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 30s
+
+volumes:
+  blog4mi_codespaces_mysql:

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "A personal blog with a M3E-inspired editorial interface, built with Node.js, TypeScript and MySQL.",
+  "description": "晚安的博客：使用 Node.js、TypeScript 和 MySQL 构建的 M3E 风格个人博客。",
   "engines": {
     "node": ">=20"
   },
@@ -16,7 +16,9 @@
     "db:migrate": "tsx src/scripts/migrate.ts",
     "db:seed": "tsx src/scripts/seed.ts",
     "db:migrate:prod": "node dist/scripts/migrate.js",
-    "db:seed:prod": "node dist/scripts/seed.js"
+    "db:seed:prod": "node dist/scripts/seed.js",
+    "db:clear-content": "tsx src/scripts/clear-content.ts",
+    "db:clear-content:prod": "node dist/scripts/clear-content.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

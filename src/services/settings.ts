@@ -1,7 +1,7 @@
 import { execute, queryRows } from '../db.js';
 
 export const defaultSettings = {
-  site_title: '余白手记',
+  site_title: '晚安的博客',
   site_subtitle: 'MI · FIELD NOTES',
   site_description: '关于代码、设计与日常观察的个人博客。',
   author_name: 'JXY',

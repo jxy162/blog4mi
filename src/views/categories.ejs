@@ -10,6 +10,7 @@
 </section>
 
 <section class="section shell categories-showcase">
+  <% if (categories.length) { %>
   <div class="category-grid">
     <% categories.forEach((category, index) => { %>
     <a class="category-card category-card-<%= index % 4 %>" href="/posts?category=<%= category.slug %>" data-reveal style="--accent: <%= category.color %>">
@@ -26,6 +27,9 @@
     </a>
     <% }) %>
   </div>
+  <% } else { %>
+  <div class="empty-state"><h2>还没有创建分类。</h2><p>发布文章后，可以在后台为内容建立主题分类。</p></div>
+  <% } %>
 </section>
 
 <section class="section shell category-note" data-reveal>
