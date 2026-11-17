@@ -17,7 +17,8 @@ import { defaultSettings, getSettings, type SiteSettings } from './services/sett
 
 export function createApp(): express.Express {
   const app = express();
-  const secureCookies = isProduction && env.SITE_URL.startsWith('https://');
+  const usesHttps = env.SITE_URL.startsWith('https://');
+  const secureCookies = isProduction && usesHttps;
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
   app.set('view engine', 'ejs');
@@ -37,10 +38,12 @@ export function createApp(): express.Express {
           scriptSrc: ["'self'", "'unsafe-inline'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           connectSrc: ["'self'"],
+          upgradeInsecureRequests: usesHttps ? [] : null,
         },
       },
       crossOriginResourcePolicy: { policy: 'cross-origin' },
       referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+      strictTransportSecurity: usesHttps ? undefined : false,
     }),
   );
   app.use(compression());
