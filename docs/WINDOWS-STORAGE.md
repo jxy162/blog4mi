@@ -1,120 +1,130 @@
-# Windows：把 WSL 与 Docker 放到 D 盘
+# Windows：使用 Docker Desktop 并把数据放到 D 盘
 
-本机 C 盘空间有限，因此项目相关的 WSL 磁盘、Docker 数据与 MySQL 开发实例都规划在 D 盘。
+本机 C 盘空间有限。本项目使用 **Docker Desktop + WSL 2 后端**，安装目录、Docker 镜像/卷数据、WSL 发行版和开发用 MySQL 均规划在 D 盘。
 
 ## 当前已完成的配置
 
-- `C:\Users\<user>\.wslconfig`
-  - WSL 2 内存限制：6 GB
-  - CPU：4
-  - Swap：4 GB
-  - Swap 文件：`D:\WSL\swap.vhdx`
-- WSL Ubuntu 目标目录：`D:\WSL\Ubuntu`
-- Ubuntu 24.04 WSL 根文件系统：`D:\WSL\ubuntu-noble-rootfs.tar.gz`
-- Docker 预留目录：`D:\Docker`
-- 本地验证用 MySQL 8.4：`D:\MySQL`，端口 `3307`
+| 项目 | 位置 / 版本 |
+| --- | --- |
+| Docker Desktop | `D:\Docker\DockerDesktop` |
+| Docker Desktop 版本 | `4.99.0` |
+| Docker Engine | `29.9.3`，Linux 容器 |
+| Docker Compose | `v5.7.0` |
+| Docker Desktop WSL 数据根目录 | `D:\Docker\data` |
+| Docker Desktop 发行版磁盘 | `D:\Docker\data\main\ext4.vhdx` |
+| Docker 镜像、容器和卷数据 | `D:\Docker\data\disk\docker_data.vhdx` |
+| WSL Ubuntu 发行版 | `D:\WSL\Ubuntu` |
+| WSL Swap | `D:\WSL\swap.vhdx` |
+| 本地验证用 MySQL 8.4 | `D:\MySQL`，端口 `3307` |
 
-## 为什么还没有启动 WSL
+C 盘仍会保留少量 Docker Desktop 配置和日志，主要位于 `%APPDATA%\Docker` 与 `%LOCALAPPDATA%\Docker`，但镜像、容器、数据库卷和 WSL 虚拟磁盘均位于 D 盘。
 
-当前系统没有启用「虚拟机平台（VirtualMachinePlatform）」，因此 `wsl --import` 会提示：
+## Docker Desktop 安装方式
+
+安装器下载到 `D:\Docker\DockerDesktopInstaller.exe` 后，使用当前用户模式安装，并将 WSL 数据根目录指向 D 盘：
+
+```powershell
+& 'D:\Docker\DockerDesktopInstaller.exe' install `
+  --user `
+  --quiet `
+  --accept-license `
+  --backend=wsl-2 `
+  --installation-dir=D:\Docker\DockerDesktop `
+  --wsl-default-data-root=D:\Docker\data
+```
+
+`--user` 安装不要求管理员权限。安装完成后，Docker Desktop 会把镜像和卷存储到 `--wsl-default-data-root` 指定的位置。
+## 日常启动项目
+
+先启动 Docker Desktop：
+
+```powershell
+Start-Process 'D:\Docker\DockerDesktop\Docker Desktop.exe'
+```
+
+等待托盘中的 Docker 图标显示引擎已启动，然后执行：
+
+```powershell
+Set-Location D:\project\BLOG
+docker compose up -d --build
+docker compose ps
+```
+
+首次启动会自动拉取镜像、构建应用、执行数据库建表与初始化种子数据。服务就绪后访问：
+
+- 博客首页：<http://localhost:3000>
+- 健康检查：<http://localhost:3000/health>
+- 管理后台：<http://localhost:3000/admin/login>
+- 默认管理员：`admin` / `Admin@123456`
+
+查看日志：
+
+```powershell
+docker compose logs -f app
+```
+
+停止项目：
+
+```powershell
+docker compose down
+```
+
+该命令保留 MySQL 数据卷。只有确定要清空全部博客数据时才执行：
+
+```powershell
+docker compose down -v
+```
+## 验证数据确实位于 D 盘
+
+检查 WSL 发行版及其虚拟磁盘：
+
+```powershell
+wsl -l -v
+Get-ChildItem D:\Docker\data -Recurse -Filter *.vhdx |
+  Select-Object FullName, Length, LastWriteTime
+```
+
+预期至少能看到：
 
 ```text
-当前计算机配置不支持 WSL2
+D:\Docker\data\main\ext4.vhdx
+D:\Docker\data\disk\docker_data.vhdx
 ```
 
-启用该 Windows 功能需要管理员权限并重启电脑。
-
-## 一次性启用与导入
-
-在**管理员 PowerShell**中执行：
+检查 Docker 引擎和磁盘占用：
 
 ```powershell
-wsl --install --no-distribution
-```
-
-也可以使用：
-
-```powershell
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-```
-
-随后重启 Windows。重启后执行：
-
-```powershell
-wsl --import Ubuntu D:\WSL\Ubuntu D:\WSL\ubuntu-noble-rootfs.tar.gz --version 2
-wsl --set-default Ubuntu
-wsl --list --verbose
-```
-
-确认 `Ubuntu` 的 `VERSION` 为 `2`，并检查 `D:\WSL\Ubuntu\ext4.vhdx` 已生成。该 VHDX 就是发行版全部数据，位于 D 盘。
-
-## 在 Ubuntu 中安装 Docker Engine
-
-```powershell
-wsl -d Ubuntu -u root
-```
-
-在 Ubuntu 内执行：
-
-```bash
-apt-get update
-apt-get install -y ca-certificates curl gnupg docker.io docker-compose-v2
-mkdir -p /etc/docker /srv/docker
-cat >/etc/docker/daemon.json <<'EOF'
-{
-  "data-root": "/srv/docker"
-}
-EOF
-
-cat >/etc/wsl.conf <<'EOF'
-[boot]
-systemd=true
-EOF
-
-systemctl enable --now docker
-```
-
-创建日常用户并加入 Docker 组：
-
-```bash
-adduser jxy
-usermod -aG docker jxy
-```
-
-回到 Windows，重启 WSL：
-
-```powershell
-wsl --shutdown
-wsl -d Ubuntu -u jxy
-```
-
-验证：
-
-```bash
 docker version
-docker compose version
-docker info | grep "Docker Root Dir"
+docker info
+docker system df
 ```
 
-`Docker Root Dir` 应为 `/srv/docker`。该路径位于 `D:\WSL\Ubuntu\ext4.vhdx` 内，实际占用仍在 D 盘。
+## 常用维护命令
 
-## 如果选择 Docker Desktop
+```powershell
+# 查看所有容器
+docker compose ps
 
-项目不依赖 Docker Desktop。若后续仍要安装，请：
+# 重新构建博客应用
+docker compose build --no-cache app
+docker compose up -d
 
-1. 在 Docker Desktop 的 `Settings → Resources → Advanced` 中把磁盘镜像位置改为 `D:\Docker\data`。
-2. 不要使用默认的 `%LOCALAPPDATA%\Docker\wsl`。
-3. 安装前确认所有 WSL 发行版已通过 `wsl --import` 导入到 `D:\WSL`。
-4. Docker Desktop 的程序文件通常仍会写入 `C:\Program Files`；推荐方案是 **WSL Ubuntu 内运行 Docker Engine**。
+# 清理未使用的镜像和构建缓存
+docker image prune
+docker builder prune
 
+# 查看 Docker Desktop 磁盘镜像
+Get-ChildItem D:\Docker\data -Recurse -Filter *.vhdx
+```
+
+不要随意删除 `D:\Docker\data` 下的 VHDX 文件，否则会丢失 Docker 镜像、容器和 MySQL 数据卷。备份博客数据库时建议使用 `mysqldump`，不要直接复制正在运行的容器文件。
 ## 本地 MySQL 开发实例
 
-为完成当前项目的真实数据库验证，已使用 MySQL 8.4 便携版：
+便携版 MySQL 8.4 仅用于不通过 Docker 的本机开发与验收，端口为 `3307`，避免与 Docker Compose 暴露的 `3306` 冲突：
 
 - 程序：`D:\MySQL\server\mysql-8.4.7-winx64`
 - 数据：`D:\MySQL\data`
 - 配置：`D:\MySQL\my.ini`
-- 端口：`3307`
 - 日志：`D:\MySQL\mysql-error.log`
 
 启动：
@@ -131,5 +141,3 @@ Start-Process 'D:\MySQL\server\mysql-8.4.7-winx64\bin\mysqld.exe' `
 & 'D:\MySQL\server\mysql-8.4.7-winx64\bin\mysqladmin.exe' `
   --protocol=TCP --host=127.0.0.1 --port=3307 --user=root shutdown
 ```
-
-项目正式部署推荐 Docker Compose 或独立 MySQL 8.4 服务。便携 MySQL 只用于本机开发与验收。

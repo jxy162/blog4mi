@@ -52,13 +52,18 @@ Copy-Item .env.example .env
 
 生产环境必须替换 `SESSION_SECRET` 和默认管理员密码。
 
-### 2. 使用 Docker Compose
+### 2. 使用 Docker Desktop
 
-```bash
+先启动 Docker Desktop，然后在项目目录执行：
+
+```powershell
 docker compose up -d --build
+docker compose ps
 ```
 
-应用会等待 MySQL 就绪，自动执行建表和幂等种子脚本，然后监听 `http://localhost:3000`。
+应用会等待 MySQL 通过 TCP 健康检查，自动执行建表和幂等种子脚本，然后监听 `http://localhost:3000`。健康检查地址为 `http://localhost:3000/health`。
+
+Windows 下的安装目录、Docker 数据盘位置与日常命令见 [docs/WINDOWS-STORAGE.md](docs/WINDOWS-STORAGE.md)。
 
 仅启动数据库：
 
@@ -119,7 +124,7 @@ docs/                  设计与 Windows 存储说明
 ## 设计与安全说明
 
 - 视觉规范与目标站分析见 [docs/DESIGN.md](docs/DESIGN.md)。
-- Windows 下将 WSL / Docker 数据放到 D 盘的步骤见 [docs/WINDOWS-STORAGE.md](docs/WINDOWS-STORAGE.md)。
+- Windows 下 Docker Desktop 安装、WSL 2 配置与 D 盘数据位置见 [docs/WINDOWS-STORAGE.md](docs/WINDOWS-STORAGE.md)。
 - 所有写操作均经过 CSRF 校验；Markdown 输出经过白名单清洗。
 - 评论默认进入待审核队列，登录和评论接口有限流。
 - 生产环境建议通过 HTTPS 反向代理暴露服务，并定期备份 MySQL。
