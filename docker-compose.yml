@@ -28,7 +28,8 @@ services:
     container_name: blog4mi-app
     restart: unless-stopped
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       NODE_ENV: production
       DATABASE_URL: mysql://blog:blogpassword@db:3306/blog4mi

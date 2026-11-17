@@ -104,6 +104,15 @@ npm run dev
 
 首次登录后请立即在「账号安全」中修改密码。
 
+## 生产部署
+
+GitHub Pages 无法运行 Node.js 与 MySQL。正式部署采用 **GitHub Actions + Railway**：
+
+- GitHub Actions 自动执行测试、Docker 冒烟测试并发布镜像到 GHCR；
+- Railway 从 GitHub 仓库自动部署博客容器和 MySQL，生成公网 HTTPS 域名。
+
+完整步骤见 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)。
+
 ## 常用命令
 
 ```bash
@@ -131,6 +140,7 @@ src/
 db/schema.sql          MySQL 表结构
 tests/                 Vitest 单元测试
 .devcontainer/         GitHub Codespaces 开发容器配置
+railway.json           Railway 生产部署配置
 docs/                  设计与部署说明
 ```
 
@@ -139,6 +149,7 @@ docs/                  设计与部署说明
 - 视觉规范与目标站分析见 [docs/DESIGN.md](docs/DESIGN.md)。
 - Windows 下 Docker Desktop 安装、WSL 2 配置与 D 盘数据位置见 [docs/WINDOWS-STORAGE.md](docs/WINDOWS-STORAGE.md)。
 - GitHub Codespaces 启动方式与默认账号见 [docs/CODESPACES.md](docs/CODESPACES.md)。
+- Railway + GitHub Actions 生产部署见 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)。
 - 所有写操作均经过 CSRF 校验；Markdown 输出经过白名单清洗。
 - 评论默认进入待审核队列，登录和评论接口有限流。
 - 生产环境建议通过 HTTPS 反向代理暴露服务，并定期备份 MySQL。
